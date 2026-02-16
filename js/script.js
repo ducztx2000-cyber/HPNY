@@ -94,6 +94,8 @@ const imageSources = [
 ];
 const loadedImages = [];
 const imageBursts = [];
+let shuffledWishImages = [];
+let currentWishImageIndex = 0;
 
 	// Sau 10s kể từ khi bắt đầu show mới cho phép xuất hiện ảnh trong pháo
 	// Mặc định tắt khi có câu chúc đang bay
@@ -117,10 +119,35 @@ function preloadImages() {
 	});
 }
 
+function shuffleArray(array) {
+    const arr = array.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function getNextWishImage() {
+    if (!loadedImages.length) return null;
+
+    if (
+        shuffledWishImages.length === 0 ||
+        currentWishImageIndex >= shuffledWishImages.length
+    ) {
+        shuffledWishImages = shuffleArray(loadedImages);
+        currentWishImageIndex = 0;
+    }
+
+    const img = shuffledWishImages[currentWishImageIndex];
+    currentWishImageIndex++;
+    return img;
+}
+
 function addImageBurst(x, y, baseSize = 200) {
 	if (!loadedImages.length) return;
-	 const img = loadedImages[(Math.random() * loadedImages.length) | 0];
-	// const img = getNextWishImage();
+	// const img = loadedImages[(Math.random() * loadedImages.length) | 0];
+	 const img = getNextWishImage();
 	
 	// Responsive: giảm kích thước trên mobile
 	const isMobile = window.innerWidth <= 768;
